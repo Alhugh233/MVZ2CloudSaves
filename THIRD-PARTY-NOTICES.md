@@ -129,11 +129,17 @@ complete GPL-3.0 text is in [LICENSE](LICENSE) and
 
 MVZ2CloudSaves is GPL-3.0. The complete corresponding source is:
 
-1. the `src/` directory included in the `-Pack` output, and
-2. the public MVZ2CloudSaves source repository.
+1. the public MVZ2CloudSaves source repository at the release tag/commit, and
+2. the "Source code (zip)" / "Source code (tar.gz)" archives that GitHub
+   generates automatically for that Release.
 
-`SOURCE.txt` points to this. If a binary is distributed without `src/`, the
-distributor must provide the complete source or a valid GPL-3.0 written offer.
+The optional `src/` directory produced by `build.ps1 -Pack` may also be
+included; the release zip omits it to keep the download small. In that case the
+repository tag and GitHub's source archive are the corresponding source.
+
+`SOURCE.txt` points to this. If a binary is distributed without access to that
+source, the distributor must provide the complete source or a valid GPL-3.0
+written offer.
 
 ---
 
@@ -176,7 +182,7 @@ this project. The name is used only for attribution.
 - [ ] `LICENSES/LGPL-2.1.txt` present
 - [ ] `LICENSES/MIT-HarmonyX.txt` present
 - [ ] `LICENSES/MIT-MonoMod.txt` present
-- [ ] `SOURCE.txt` present and `src/` included in the package
+- [ ] `SOURCE.txt` present and points to the release tag source (or `src/` when included)
 - [ ] `libs/LanguagePackEnhance.API.dll` accompanied by its Apache license/notice
 - [ ] no `interop/`, `runtime/`, game assemblies, or BepInEx/DSHCore/LPE plugin DLLs
       accidentally included

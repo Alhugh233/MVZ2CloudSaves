@@ -249,7 +249,7 @@ dotnet build \
 bin/Debug/net6.0/MVZ2CloudSaves.dll
 ```
 
-`-Pack` 会把 DLL、README、LICENSE、`THIRD-PARTY-NOTICES.md`、`LICENSES/`、`SOURCE.txt`，以及完整的对应源码 `src/` 复制到 `dist/`（GPL-3.0 §6）。
+`-Pack` 会把 DLL、README、LICENSE、`THIRD-PARTY-NOTICES.md`、`LICENSES/`、`SOURCE.txt`，以及完整的对应源码 `src/` 复制到 `dist/`（GPL-3.0 §6）。正式 Release 的 zip 可以不带 `src/`，此时以仓库对应 tag 和 GitHub Release 自动生成的 Source code 归档作为对应源码。
 
 ### 依赖
 

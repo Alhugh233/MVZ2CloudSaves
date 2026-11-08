@@ -239,7 +239,7 @@ On Windows:
 
 Output: `bin/Debug/net6.0/MVZ2CloudSaves.dll`.
 
-`-Pack` copies the DLL, READMEs, `LICENSE`, `THIRD-PARTY-NOTICES.md`, `LICENSES/`, `SOURCE.txt`, and the complete corresponding source `src/` into `dist/` (GPL-3.0 §6).
+`-Pack` copies the DLL, READMEs, `LICENSE`, `THIRD-PARTY-NOTICES.md`, `LICENSES/`, `SOURCE.txt`, and the complete corresponding source `src/` into `dist/` (GPL-3.0 §6). The release zip may omit `src/`; in that case the repository tag and GitHub's auto-generated Source code archive are the corresponding source.
 
 ## Compatibility
 
