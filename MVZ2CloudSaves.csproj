@@ -1,0 +1,101 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>MVZ2CloudSaves</AssemblyName>
+    <Product>MVZ2CloudSaves</Product>
+    <Version>0.1.0</Version>
+    <BepInExPluginGuid>com.mvz2.cloudsaves</BepInExPluginGuid>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <RestoreAdditionalProjectSources>
+      https://api.nuget.org/v3/index.json;
+      https://nuget.bepinex.dev/v3/index.json;
+      https://nuget.samboy.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
+    <RootNamespace>MVZ2CloudSaves</RootNamespace>
+    <InteropDir Condition="'$(InteropDir)' == ''">$(MSBuildThisFileDirectory)interop</InteropDir>
+    <LpeDir Condition="'$(LpeDir)' == ''">$(MSBuildThisFileDirectory)libs</LpeDir>
+    <DshCoreDir Condition="'$(DshCoreDir)' == ''">$(MSBuildThisFileDirectory)libs/dshcore</DshCoreDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DSHCore">
+      <HintPath>$(DshCoreDir)/DSHCore.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="LanguagePackEnhance.API">
+      <HintPath>$(LpeDir)/LanguagePackEnhance.API.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MVZ2">
+      <HintPath>$(InteropDir)/MVZ2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="MVZ2.Logic">
+      <HintPath>$(InteropDir)/MVZ2.Logic.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="PVZEngine.Base">
+      <HintPath>$(InteropDir)/PVZEngine.Base.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="PVZEngine.Level">
+      <HintPath>$(InteropDir)/PVZEngine.Level.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(InteropDir)/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(InteropDir)/UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>$(InteropDir)/UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AndroidJNIModule">
+      <HintPath>$(InteropDir)/UnityEngine.AndroidJNIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(InteropDir)/UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(InteropDir)/Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>$(InteropDir)/Il2Cppmscorlib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Il2CppSystem">
+      <HintPath>$(InteropDir)/Il2CppSystem.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Il2CppSystem.Core">
+      <HintPath>$(InteropDir)/Il2CppSystem.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MVZ2CloudSaves.lang.json">
+      <LogicalName>MVZ2CloudSaves.lang.json</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

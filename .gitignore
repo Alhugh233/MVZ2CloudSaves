@@ -1,0 +1,8 @@
+bin/
+obj/
+interop/
+libs/dshcore/
+*.user
+*.suo
+.vs/
+.idea/

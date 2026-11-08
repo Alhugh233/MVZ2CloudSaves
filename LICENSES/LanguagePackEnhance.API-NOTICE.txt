@@ -1,0 +1,2 @@
+LanguagePackEnhance.API
+Copyright (C) 2026 Alhugh233

@@ -1,0 +1,11 @@
+MVZ2CloudSaves — source and license
+
+MVZ2CloudSaves is licensed under GNU GPL-3.0 (see LICENSE).
+Copyright (C) 2026 Alhugh233.
+
+The complete corresponding source code is provided in the `src/` directory
+of this package, and in the public MVZ2CloudSaves source repository.
+
+If this package was distributed to you without access to that source,
+contact the distributor to obtain the complete source code, as required
+by GPL-3.0 section 6.
