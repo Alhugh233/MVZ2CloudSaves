@@ -84,7 +84,7 @@ The log should contain `Plugin com.mvz2.cloudsaves is loaded!`.
 
 ### 1. Configure a token
 
-Enter a GitHub token in the Cloud Saves page and press **Save and validate**. On Android and desktop you can use **Paste from clipboard** to fill in the complete token.
+Enter a GitHub token in the Cloud Saves page and press **Save and validate**. On Android and desktop you can use **Paste from clipboard** to fill in the complete token; **Create token** opens GitHub's fine-grained token page, and **Open repository** opens the configured repository.
 
 - The token is written to encrypted local storage first, then validated online.
 - Only an HTTP 401 rolls the token back and reports “token invalid”.

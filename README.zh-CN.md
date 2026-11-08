@@ -84,7 +84,7 @@ MVZ2CloudSaves 把整个 `userdata/` 作为快照同步到你的 **私有 GitHub
 
 ### 1. 配置 token
 
-在「云存档」页输入 GitHub token，点击「保存并验证」。Android/桌面都可以用「从剪贴板粘贴」直接填入完整 token。
+在「云存档」页输入 GitHub token，点击「保存并验证」。Android/桌面都可以用「从剪贴板粘贴」直接填入完整 token；「创建 Token」可直接打开 GitHub 的 fine-grained token 创建页，「打开仓库」打开当前仓库。
 
 - token 会先写入本地加密存储，再联网验证；
 - 验证返回 401 才会回滚并提示「token 无效」；

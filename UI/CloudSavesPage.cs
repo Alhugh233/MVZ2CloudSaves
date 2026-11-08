@@ -1,6 +1,7 @@
 #nullable enable
 
 using System;
+using System.Text;
 using DSHCore.Ui;
 using Il2CppInterop.Runtime;
 using MVZ2.Managers;
@@ -100,6 +101,8 @@ internal sealed class CloudSavesPage : AddonPage
 
             AddSection("GitHub Token");
             AddInputRow("Token", "", tokenDraft, true, "保存并验证", SaveToken);
+            if (tokenDraft.Length > 0)
+                AddParagraph(Loc.T("Token 已输入 {0} 个字符", tokenDraft.Length));
             AddButtonRow("从剪贴板粘贴", new Action(PasteToken),
                 "清除 Token", new Action(ClearToken),
                 "验证仓库", new Action(ValidateRepo));
@@ -117,7 +120,9 @@ internal sealed class CloudSavesPage : AddonPage
             AddButtonRow("立即同步", () => CloudSaveService.ManualSync(),
                 "上传本地", () => CloudSaveService.ManualUpload(),
                 "从云端恢复", () => CloudSaveService.ManualDownload());
-            AddButtonRow("打开 GitHub", new Action(OpenGitHub), "刷新", new Action(Rebuild));
+            AddButtonRow("创建 Token", new Action(OpenTokenPage),
+                "打开仓库", new Action(OpenRepository),
+                "刷新", new Action(Rebuild));
 
             AddParagraph(Loc.T("云存档只在非关卡状态同步关卡进度。关卡内会先记录改动，退出关卡后再上传。"));
         }
@@ -129,7 +134,7 @@ internal sealed class CloudSavesPage : AddonPage
 
     private void SaveToken()
     {
-        var value = tokenInput != null ? tokenInput.text : "";
+        var value = StripWhitespace(tokenInput != null ? tokenInput.text : "");
         Diag.Info("UI 保存 token：输入长度=" + value.Length);
         localMessage = string.Empty;
         if (value.Length == 0)
@@ -151,21 +156,58 @@ internal sealed class CloudSavesPage : AddonPage
     {
         try
         {
-            var text = (GUIUtility.systemCopyBuffer ?? string.Empty).Trim();
+            var text = StripWhitespace(Clipboard.Read());
             if (string.IsNullOrEmpty(text))
             {
                 Toast.Show(Loc.T("云存档：剪贴板为空"));
                 return;
             }
+
+            var actual = 0;
             if (tokenInput != null)
+            {
+                // 再次确认没有被原版输入框素材的 16 字符上限截断。
+                try { tokenInput.characterLimit = 0; } catch { }
                 tokenInput.text = text;
-            Toast.Show(Loc.T("云存档：已从剪贴板粘贴 {0} 个字符", text.Length));
+                actual = tokenInput.text.Length;
+            }
+
+            Diag.Info("粘贴 token：剪贴板长度=" + text.Length
+                + "，输入框长度=" + actual
+                + "，characterLimit=" + SafeCharacterLimit());
+            if (actual != text.Length)
+                Diag.Warn("粘贴 token 长度不一致：剪贴板 " + text.Length + "，输入框 " + actual);
+
+            var message = Loc.T("云存档：已粘贴 {0} / {1} 个字符", actual, text.Length);
+            localMessage = message;
+            Toast.Show(message);
+            Rebuild();
         }
         catch (Exception e)
         {
             Diag.Warn("读取剪贴板失败：" + e.Message);
             Toast.Show(Loc.T("云存档：剪贴板不可用"));
         }
+    }
+
+    private int SafeCharacterLimit()
+    {
+        try { return tokenInput != null ? tokenInput.characterLimit : -1; }
+        catch { return -2; }
+    }
+
+    /// <summary>GitHub token 不含空白字符；去掉换行/空格，避免单行输入框只显示第一行。</summary>
+    private static string StripWhitespace(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return string.Empty;
+        var sb = new StringBuilder(value.Length);
+        for (var i = 0; i < value.Length; i++)
+        {
+            if (!char.IsWhiteSpace(value[i]))
+                sb.Append(value[i]);
+        }
+        return sb.ToString();
     }
 
     private void ClearToken()
@@ -232,20 +274,34 @@ internal sealed class CloudSavesPage : AddonPage
         });
     }
 
-    private void OpenGitHub()
+    private void OpenTokenPage()
+    {
+        OpenUrl("https://github.com/settings/personal-access-tokens/new");
+    }
+
+    private void OpenRepository()
     {
         if (!CloudSavesConfig.IsConfigured)
         {
             Toast.Show(Loc.T("云存档：请先配置仓库"));
             return;
         }
+        OpenUrl("https://github.com/" + CloudSavesConfig.Owner.Value + "/" + CloudSavesConfig.Repo.Value);
+    }
+
+    private void OpenUrl(string url)
+    {
         try
         {
-            Application.OpenURL("https://github.com/" + CloudSavesConfig.Owner.Value + "/" + CloudSavesConfig.Repo.Value);
+            Application.OpenURL(url);
+            Toast.Show(Loc.T("云存档：正在打开浏览器"));
         }
         catch (Exception e)
         {
-            Diag.Warn("打开 GitHub 失败：" + e.Message);
+            // 部分 Android 容器（例如 FusionCore）没有映射 OpenURL 的 ICall，
+            // 或没有可处理 ACTION_VIEW 的应用。
+            Diag.Warn("打开链接失败：" + e.Message);
+            Toast.Show(Loc.T("云存档：无法打开浏览器") + "：" + url);
         }
     }
 
@@ -285,21 +341,24 @@ internal sealed class CloudSavesPage : AddonPage
                 // 素材来自原版「输入玩家名字」对话框，prefab 里 m_CharacterLimit = 16。
                 // GitHub token 至少 40 个字符（fine-grained 约 90+），不放开就会被
                 // 悄悄截断，表现为“token 明明是对的却提示无效”。这里必须显式清 0。
+                // 每项单独 try/catch：任何一项失败都不能影响后面的设置。
+                try { input.characterLimit = 0; }
+                catch (Exception e) { Diag.Warn("设置 characterLimit 失败：" + e.Message); }
+                try { input.lineType = TMP_InputField.LineType.SingleLine; }
+                catch (Exception e) { Diag.Warn("设置 lineType 失败：" + e.Message); }
+                try { input.restoreOriginalTextOnEscape = true; }
+                catch (Exception e) { Diag.Warn("设置 restoreOriginalTextOnEscape 失败：" + e.Message); }
+                try { input.richText = false; }
+                catch (Exception e) { Diag.Warn("设置 richText 失败：" + e.Message); }
                 try
                 {
-                    input.characterLimit = 0;
-                    input.lineType = TMP_InputField.LineType.SingleLine;
-                    input.restoreOriginalTextOnEscape = true;
-                    input.richText = false;
                     input.contentType = password
                         ? TMP_InputField.ContentType.Password
                         : TMP_InputField.ContentType.Standard;
-                    input.text = initial ?? string.Empty;
                 }
-                catch (Exception e)
-                {
-                    Diag.Warn("配置输入框失败：" + e.Message);
-                }
+                catch (Exception e) { Diag.Warn("设置 contentType 失败：" + e.Message); }
+                try { input.text = initial ?? string.Empty; }
+                catch (Exception e) { Diag.Warn("设置输入框文本失败：" + e.Message); }
                 UiKit.Fit(node, 260f, UiKit.RowHeight, 1f);
                 if (password)
                     tokenInput = input;
